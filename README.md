@@ -4,6 +4,13 @@ For now the purpose of this tool is to strip non-published data from the Native 
 
 It currently works with the OJS 3.3 format, other releases were not tested, and it's probably not going to work.
 
+## Usage
+
+Running the script will display a helpful text with the possible arguments.
+```sh
+php native-xml-stripper.php
+```
+
 ## Details
 
 Considering the sample commands below:

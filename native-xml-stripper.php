@@ -78,9 +78,22 @@ class NativeXmlFilter {
                 if ($this->configuration->uploader) {
                     $submissionFile->setAttribute('uploader', $this->configuration->uploader);
                 }
+
                 if ($data) {
                     $data->genres ??= [];
                     $data->genres[$submissionFile->getAttribute('genre')] = null;
+                }
+
+                $fileId = $submissionFile->getAttribute('file_id');
+                $currentFile = $this->selectFirst("pkp:file[@id = {$fileId}]", $submissionFile);
+                if (!$currentFile) {
+                    throw new Exception('The <file> entry with ID  was not found');
+                }
+
+                foreach ($this->select('pkp:file', $submissionFile) as $file) {
+                    if ($file !== $currentFile) {
+                        $file->remove();
+                    }
                 }
             }
 
