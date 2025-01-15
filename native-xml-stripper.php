@@ -107,12 +107,12 @@ class NativeXmlFilter {
                 foreach ($this->select('//@locale') as $locale) {
                     $data->locales[$locale->nodeValue] = null;
                 }
-                $data->locales = array_keys($data->locales);
-                $data->genres = array_keys($data->genres);
-                $genreList = "SELECT '" . implode("' AS genre UNION ALL SELECT '", array_map(fn (string $genre) => addcslashes($genre, "'\\"), $data->genres)) . "' AS genre";
+                $locales = array_keys($data->locales);
+                $genres = array_keys($data->genres);
+                $genreList = "SELECT '" . implode("' AS genre UNION ALL SELECT '", array_map(fn (string $genre) => addcslashes($genre, "'\\"), $genres)) . "' AS genre";
                 file_put_contents($this->configuration->instructions, implode("\n", [
                     '#1. Ensure the following locales are enabled in the journal:',
-                    implode(', ', $data->locales),
+                    implode(', ', $locales),
                     '',
                     '#2. Run the query below, it will ensure the required genres exist:',
                     '```sql',
@@ -147,7 +147,10 @@ class NativeXmlFilter {
                     '#3. Import the stripped XMLs.',
                 ]));
 
-                file_put_contents($this->configuration->data, json_encode($data, JSON_PRETTY_PRINT));
+                file_put_contents($this->configuration->data, json_encode([
+                    'locales' => $locales,
+                    'genres' => $genres
+                ], JSON_PRETTY_PRINT));
             }
         }
         $this->document->save($this->configuration->output);
